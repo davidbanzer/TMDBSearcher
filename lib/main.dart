@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:themoviedb_flutter/models/Pelicula.dart';
+import 'package:themoviedb_flutter/models/pelicula.dart';
+import 'package:themoviedb_flutter/pages/detalle_pelicula.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,6 +26,7 @@ class _MyAppState extends State<MyApp> {
       final json = jsonDecode(contenido);
       for (var item in json["results"]) {
         peliculas.add(Pelicula(
+            item["id"],
             item["original_title"],
             item["release_date"],
             item["overview"],
@@ -43,7 +45,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _listaPeliculas = _obtenerPeliculas("iron");
+    _listaPeliculas = _obtenerPeliculas("marvel");
   }
 
   @override
@@ -109,29 +111,36 @@ class _MyAppState extends State<MyApp> {
   List<Widget> _listViewPeliculas(data) {
     List<Widget> peliculas = [];
     for (var pelicula in data) {
-      peliculas.add(InkWell(
-        onTap: () {
-          print(pelicula.titulo);
-        },
-        child: Card(
-            child: Column(
-          children: [
-            Expanded(
-                child: CachedNetworkImage(
-                    imageUrl: pelicula.imagen,
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error))),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(pelicula.titulo),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(pelicula.lanzamiento),
-            )
-          ],
-        )),
-      ));
+      peliculas.add(Builder(builder: (context) {
+        return InkWell(
+          onTap: () {
+            print(pelicula.id);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DetallePelicula(pelicula.id)));
+          },
+          child: Card(
+              child: Column(
+            children: [
+              Expanded(
+                  child: CachedNetworkImage(
+                      imageUrl: pelicula.imagen,
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error))),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(pelicula.titulo),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(pelicula.lanzamiento),
+              )
+            ],
+          )),
+        );
+      }));
     }
     return peliculas;
   }
