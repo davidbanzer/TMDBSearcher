@@ -118,7 +118,13 @@ class _MyAppState extends State<MyApp> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => DetallePelicula(pelicula.id)));
+                    builder: (context) => DetallePelicula(
+                        pelicula.id,
+                        pelicula.titulo,
+                        pelicula.lanzamiento,
+                        pelicula.sinopsis,
+                        pelicula.imagen,
+                        pelicula.calificacion)));
           },
           child: Card(
               child: Column(
